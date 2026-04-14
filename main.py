@@ -1,4 +1,3 @@
-from src.game.board import Board
 from src.enums.play_option import PlayOption
 from src.game.players.human_player import HumanPlayer
 from src.game.tic_tac_toe_game import TicTacToeGame
