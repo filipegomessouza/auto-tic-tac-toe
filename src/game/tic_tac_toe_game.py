@@ -34,7 +34,6 @@ class TicTacToeGame:
             self.__current_player = self.__next_player()
             self.__render()
 
-
         self.__render()
 
     def __play(self) -> bool:
