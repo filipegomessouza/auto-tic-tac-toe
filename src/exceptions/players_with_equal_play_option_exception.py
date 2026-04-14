@@ -1,0 +1,2 @@
+class PlayersWithEqualPlayOptionException(Exception):
+    pass
