@@ -65,4 +65,4 @@ class TicTacToeGame:
 
     def __validate_players(self) -> None:
         if self.__player_one.play_option == self.__player_two.play_option:
-            raise PlayersWithEqualPlayOptionException('Players cannot have the same play option')
+            raise PlayersWithEqualPlayOptionException('Players cannot have the same play option.')
