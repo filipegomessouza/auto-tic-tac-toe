@@ -39,24 +39,24 @@ class Board():
 
     def __eval_result_in_lines(self) -> Optional[Result]:
         for line in self.__board:
-            if line[0] is not None and line[0] == line[1] and line[1] == line[2]:
+            if line[0] is not None and all(cell == line[0] for cell in line):
                 return Result.PLAYER_O if line[0] == PlayOption.O else Result.PLAYER_X
 
         return None
 
     def __eval_result_in_columns(self) -> Optional[Result]:
         for j in range(self.BOARD_SIZE):
-            if self.__board[0][j] is not None and self.__board[0][j] == self.__board[1][j] and self.__board[1][j] == self.__board[2][j]:
+            if self.__board[0][j] is not None and all(self.__board[i][j] == self.__board[0][j] for i in range(self.BOARD_SIZE)):
                 return Result.PLAYER_O if self.__board[0][j] == PlayOption.O else Result.PLAYER_X
 
         return None
 
     def __eval_result_in_diagonals(self) -> Optional[Result]:
-        if self.__board[0][0] is not None and self.__board[0][0] == self.__board[1][1] and self.__board[1][1] == self.__board[2][2]:
+        if self.__board[0][0] is not None and all(self.__board[i][i] == self.__board[0][0] for i in range(self.BOARD_SIZE)):
             return Result.PLAYER_O if self.__board[0][0] == PlayOption.O else Result.PLAYER_X
 
-        if self.__board[0][2] is not None and self.__board[0][2] == self.__board[1][1] and self.__board[1][1] == self.__board[2][0]:
-            return Result.PLAYER_O if self.__board[0][2] == PlayOption.O else Result.PLAYER_X
+        if self.__board[0][self.BOARD_SIZE - 1] is not None and all(self.__board[i][self.BOARD_SIZE - 1 - i] == self.__board[0][self.BOARD_SIZE - 1] for i in range(self.BOARD_SIZE)):
+            return Result.PLAYER_O if self.__board[0][self.BOARD_SIZE - 1] == PlayOption.O else Result.PLAYER_X
 
         return None
 
