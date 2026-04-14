@@ -5,13 +5,12 @@ from src.exceptions.unavailable_position_exception import UnavailablePositionExc
 from src.enums.result import Result
 
 class Board():
+    BOARD_SIZE = 3
+
     def __init__(self):
         self.__board: List[List[Optional[PlayOption]]] = [
-            [None, None, None],
-            [None, None, None],
-            [None, None, None],
+            [None] * self.BOARD_SIZE for _ in range(self.BOARD_SIZE)
         ]
-
         self.__filled_positions: int = 0
 
     def set(self, play_option: PlayOption, i: int, j: int) -> 'Board':
@@ -27,13 +26,13 @@ class Board():
         return self
 
     def __is_valid_position(self, i: int, j: int) -> bool:
-        return i >= 0 and i < 3 and j >= 0 and j < 3
+        return 0 <= i < self.BOARD_SIZE and 0 <= j < self.BOARD_SIZE
 
     def __is_available_position(self, i: int, j: int) -> bool:
         return self.__board[i][j] is None
 
     def eval_result(self) -> Optional[Result]:
-        if self.__filled_positions >= 9:
+        if self.__filled_positions >= self.BOARD_SIZE ** 2:
             return Result.DRAW
 
         return self.__eval_result_in_lines() or self.__eval_result_in_columns() or self.__eval_result_in_diagonals()
@@ -46,7 +45,7 @@ class Board():
         return None
 
     def __eval_result_in_columns(self) -> Optional[Result]:
-        for j in range(3):
+        for j in range(self.BOARD_SIZE):
             if self.__board[0][j] is not None and self.__board[0][j] == self.__board[1][j] and self.__board[1][j] == self.__board[2][j]:
                 return Result.PLAYER_O if self.__board[0][j] == PlayOption.O else Result.PLAYER_X
 
@@ -62,17 +61,13 @@ class Board():
         return None
 
     def __str__(self):
-        i = 0
         str_board = '┌───┬───┬───┐\n'
 
-        for line in self.__board:
+        for i, line in enumerate(self.__board):
             str_board += '│'
-
             for play_option in line:
                 str_board += '   │' if play_option is None else f' {play_option.value} │'
 
             str_board += '\n├───┼───┼───┤\n' if i < 2 else '\n└───┴───┴───┘\n'
-
-            i += 1
 
         return str_board
