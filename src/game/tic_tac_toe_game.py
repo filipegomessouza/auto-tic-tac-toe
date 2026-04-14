@@ -47,7 +47,7 @@ class TicTacToeGame:
 
         return is_valid_play
 
-    def __next_player(self) -> None:
+    def __next_player(self) -> Player:
         return self.__player_two if self.__current_player is self.__player_one else self.__player_one
 
     def __render(self) -> None:
