@@ -1,4 +1,4 @@
-from src.exceptions.play_exception import PlayException
+from src.exceptions.board_exception import BoardException
 
-class InvalidPositionException(PlayException):
+class InvalidPositionException(BoardException):
     pass

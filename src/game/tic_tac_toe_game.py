@@ -2,7 +2,7 @@ import os
 from typing import Optional
 from src.game.board import Board
 from src.game.players.player import Player
-from src.exceptions.play_exception import PlayException
+from src.exceptions.board_exception import BoardException
 from src.exceptions.players_with_equal_play_option_exception import PlayersWithEqualPlayOptionException
 from src.enums.result import Result
 
@@ -41,7 +41,7 @@ class TicTacToeGame:
 
         try:
             self.__current_player.play(self.__board)
-        except PlayException as e:
+        except BoardException as e:
             is_valid_play = False
             print(e)
 
