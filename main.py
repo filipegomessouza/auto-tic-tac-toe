@@ -6,7 +6,6 @@ from src.exceptions.players_with_equal_play_option_exception import PlayersWithE
 player_one = HumanPlayer('Player 1', PlayOption.X)
 player_two = HumanPlayer('Player 2', PlayOption.O)
 
-
 try:
     game = TicTacToeGame(player_one, player_two)
 
