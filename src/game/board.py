@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from src.enums.play_option import PlayOption
 from src.exceptions.invalid_position_exception import InvalidPositionException
 from src.exceptions.unavailable_position_exception import UnavailablePositionException
@@ -72,7 +72,7 @@ class Board():
 
         return None
 
-    def available_positions(self) -> List[tuple[int, int]]:
+    def available_positions(self) -> List[Tuple[int, int]]:
         return [(i, j) for i in range(self.BOARD_SIZE) for j in range(self.BOARD_SIZE) if self.__board[i][j] is None]
 
     def __str__(self):
