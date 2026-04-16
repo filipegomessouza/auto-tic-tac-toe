@@ -7,9 +7,10 @@ from src.exceptions.players_with_equal_play_option_exception import PlayersWithE
 from src.enums.result import Result
 
 class TicTacToeGame:
-    def __init__(self, player_one: Player, player_two: Player):
+    def __init__(self, player_one: Player, player_two: Player, should_render: bool = True) -> None:
         self.__player_one = player_one
         self.__player_two = player_two
+        self.__should_render = should_render
 
         self.__validate_players()
 
@@ -51,6 +52,9 @@ class TicTacToeGame:
         return self.__player_two if self.__current_player is self.__player_one else self.__player_one
 
     def __render(self) -> None:
+        if not self.__should_render:
+            return
+
         self.__clear_console()
         print(self.__board)
 

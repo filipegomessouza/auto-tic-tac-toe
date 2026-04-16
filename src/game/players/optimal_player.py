@@ -7,15 +7,18 @@ import time
 import random
 
 class OptimalPlayer(Player):
-    def __init__(self, name: str, play_option: PlayOption):
+    def __init__(self, name: str, play_option: PlayOption, time_to_wait_after_playing_move_in_seconds: Optional[float] = None) -> None:
         super().__init__(name, play_option)
+        self.__time_to_wait_after_playing_move_in_seconds = time_to_wait_after_playing_move_in_seconds
 
     def play(self, board: Board) -> None:
         positions = board.available_positions()
         i, j = random.choice(positions) if len(positions) == board.BOARD_SIZE ** 2 else self.__minimax(board)
 
         board.set(self.play_option, i, j)
-        time.sleep(0.4)
+
+        if self.__time_to_wait_after_playing_move_in_seconds is not None:
+            time.sleep(self.__time_to_wait_after_playing_move_in_seconds)
 
     def __minimax(self, board: Board) -> Tuple[int, int]:
         best_value = float('-inf')
