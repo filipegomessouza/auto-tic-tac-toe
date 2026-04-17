@@ -12,8 +12,8 @@ class OneHiddenLayerNeuralNetwork(NeuralNetwork):
         self.W2 = np.random.randn(hidden_size, output_size) * 0.5
         self.b2 = np.zeros(output_size)
 
-    def forward(self, x):
-        z1 = x @ self.W1 + self.b1
+    def forward(self, input_layer: np.ndarray) -> np.ndarray:
+        z1 = input_layer @ self.W1 + self.b1
         h  = self.__relu(z1)
         z2 = h @ self.W2 + self.b2
 
@@ -39,5 +39,5 @@ class OneHiddenLayerNeuralNetwork(NeuralNetwork):
         self.W2 = vetor[i2:i3].reshape(self.__hidden_size, self.__output_size)
         self.b2 = vetor[i3:i4]
 
-    def __relu(value: np.ndarray) -> np.ndarray:
+    def __relu(self, value: np.ndarray) -> np.ndarray:
         return np.maximum(0, value)

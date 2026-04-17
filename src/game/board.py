@@ -3,6 +3,7 @@ from src.enums.play_option import PlayOption
 from src.exceptions.invalid_position_exception import InvalidPositionException
 from src.exceptions.unavailable_position_exception import UnavailablePositionException
 from src.enums.result import Result
+import copy
 
 class Board():
     BOARD_SIZE = 3
@@ -94,3 +95,6 @@ class Board():
                 str_board += '\n  └' + '───┴' * (self.BOARD_SIZE - 1) + '───┘\n'
 
         return str_board
+
+    def get_arr_board(self) -> List[List[Optional[PlayOption]]]:
+        return copy.deepcopy(self.__board)

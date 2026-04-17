@@ -8,8 +8,8 @@ import config
 
 try:
     game = TicTacToeGame(
-        config.DISTRACTED_PLAYER_X,
-        config.HUMAN_PLAYER_O,
+        config.NEURAL_NETWORK_PLAYER_X,
+        config.NEURAL_NETWORK_PLAYER_O,
         config.SHOULD_RENDER,
     )
 except PlayersWithEqualPlayOptionException as e:

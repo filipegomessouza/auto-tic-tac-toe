@@ -17,10 +17,6 @@ class DistractedPlayer(Player):
 
     def play(self, board: Board) -> None:
         player = self.__random_player if random.random() <= self.__error_probability else self.__optimal_player
-
-        if isinstance(player, RandomPlayer):
-            print('se distraiu!')
-
         player.play(board)
 
     def set_error_probability(self, error_probability: float) -> None:
