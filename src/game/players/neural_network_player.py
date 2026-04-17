@@ -17,10 +17,6 @@ class NeuralNetworkPlayer(Player):
         input_layer = self.__get_input_layer(board)
         output_layer = self.__neural_network.forward(input_layer)
 
-        print('INPUT LAYER:', input_layer)
-        print('OUTPUT LAYER:', output_layer)
-        print()
-
         i, j = self.__get_best_move(input_layer, output_layer, board)
         board.set(self.play_option, i, j)
 
