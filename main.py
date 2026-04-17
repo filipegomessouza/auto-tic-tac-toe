@@ -6,13 +6,10 @@ from src.game.tic_tac_toe_game import TicTacToeGame
 from src.exceptions.players_with_equal_play_option_exception import PlayersWithEqualPlayOptionException
 import config
 
-player_one = config.RANDOM_PLAYER_X
-player_two = config.RANDOM_PLAYER_O
-
 try:
     game = TicTacToeGame(
-        config.RANDOM_PLAYER_X,
-        config.RANDOM_PLAYER_O,
+        config.DISTRACTED_PLAYER_X,
+        config.HUMAN_PLAYER_O,
         config.SHOULD_RENDER,
     )
 except PlayersWithEqualPlayOptionException as e:
