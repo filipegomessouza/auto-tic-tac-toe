@@ -17,21 +17,23 @@ class GeneticAlgorithm(Algorithm):
     MUTATION_RATE = 0.5
     MUTATION_MEAN = 0
     MUTATION_SIGMA = 1
-    CHANGE_STEP_RATE = 0.6
-    ELITE_SIZE = 10
+    CHANGE_STEP_RATE = 0.8
+    ELITE_SIZE = 5
     GAMES_TO_EVAL_INDIVIDUAL = 30
     WIN_POINTS = 3
     DRAW_POINTS = 1
-    LOSS_POINTS = 0
-    TOURNAMENT_SIZE = 5
+    TOURNAMENT_SIZE = 3
     INITIAL_ERROR_PROBABILITY = 1
-    MAX_TIME_IN_SECONDS = 300
+    MAX_TIME_IN_SECONDS = 60
 
     def __init__(self):
         self.__distracted_player = DistractedPlayer('Distracted', PlayOption.O, self.INITIAL_ERROR_PROBABILITY)
         self.__neural_network = OneHiddenLayerNeuralNetwork(Board.BOARD_SIZE ** 2, 2 * Board.BOARD_SIZE ** 2, Board.BOARD_SIZE ** 2)
         self.__neural_network_player = NeuralNetworkPlayer('AI', PlayOption.X, self.__neural_network)
         self.__tic_tac_toe_game = TicTacToeGame(False)
+
+        self.__win_points = self.WIN_POINTS
+        self.__draw_points = self.DRAW_POINTS
 
 
     def run(self) -> NeuralNetworkPlayer:
@@ -57,11 +59,16 @@ class GeneticAlgorithm(Algorithm):
 
             if np.mean(elite_scores) >= self.CHANGE_STEP_RATE:
                 error_probability -= 0.1
+                print('Decreasing error probability to', error_probability)
 
-                if error_probability < 0.1 or (time.time() - time_start) > self.MAX_TIME_IN_SECONDS:
-                    break
+                if error_probability <= 0.4:
+                    self.__draw_points = 2
 
                 self.__distracted_player.set_error_probability(error_probability)
+
+            if time.time() - time_start > self.MAX_TIME_IN_SECONDS:
+                print('Max time reached, stopping algorithm')
+                break
 
             next_population = []
             for _ in range(self.ELITE_SIZE, self.POPULATION_SIZE):
@@ -121,15 +128,13 @@ class GeneticAlgorithm(Algorithm):
             winner_player = self.__tic_tac_toe_game.run(player_one, player_two)
 
             if winner_player is None:
-                fitness += self.DRAW_POINTS
+                fitness += self.__draw_points
             elif winner_player is self.__neural_network_player:
-                fitness += self.WIN_POINTS
-            else:
-                fitness += self.LOSS_POINTS
+                fitness += self.__win_points
 
             player_one, player_two = player_two, player_one
 
-        return fitness / (self.GAMES_TO_EVAL_INDIVIDUAL * self.WIN_POINTS)
+        return fitness / (self.GAMES_TO_EVAL_INDIVIDUAL * self.__win_points)
 
     def select_parent(self, population: np.ndarray, fitness_scores: np.ndarray) -> np.ndarray:
         candidate_indices = np.random.choice(len(population), size=self.TOURNAMENT_SIZE, replace = True)

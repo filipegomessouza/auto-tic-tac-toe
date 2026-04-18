@@ -22,6 +22,6 @@ except PlayersWithEqualPlayOptionException as e:
     exit(1)
 
 game.run(
-    config.RANDOM_PLAYER_O,
     best_player,
+    config.TABLE_PLAYER_O,
 )
