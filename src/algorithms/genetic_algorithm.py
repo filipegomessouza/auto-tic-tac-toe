@@ -27,11 +27,8 @@ class GeneticAlgorithm(Algorithm):
 
     def __init__(self):
         self.__distracted_player = DistractedPlayer('Distracted', PlayOption.O, self.INITIAL_ERROR_PROBABILITY)
-
         self.__neural_network = OneHiddenLayerNeuralNetwork(Board.BOARD_SIZE ** 2, 2 * Board.BOARD_SIZE ** 2, Board.BOARD_SIZE ** 2)
-
         self.__neural_network_player = NeuralNetworkPlayer('AI', PlayOption.X, self.__neural_network)
-
         self.__tic_tac_toe_game = TicTacToeGame(False)
 
 
@@ -57,7 +54,7 @@ class GeneticAlgorithm(Algorithm):
             if np.mean(elite_scores) >= self.CHANGE_STEP_RATE:
                 error_probability -= 0.1
 
-                if error_probability == 0.1:
+                if error_probability < 0.1:
                     break
 
                 self.__distracted_player.set_error_probability(error_probability)
