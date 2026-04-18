@@ -10,20 +10,22 @@ from src.game.players.player import Player
 from src.utils.debug import dd
 import numpy as np
 import random
+import time
 
 class GeneticAlgorithm(Algorithm):
     POPULATION_SIZE = 100
     MUTATION_RATE = 0.5
     MUTATION_MEAN = 0
     MUTATION_SIGMA = 1
-    CHANGE_STEP_RATE = 0.8
-    ELITE_SIZE = 20
+    CHANGE_STEP_RATE = 0.6
+    ELITE_SIZE = 10
     GAMES_TO_EVAL_INDIVIDUAL = 30
     WIN_POINTS = 3
     DRAW_POINTS = 1
     LOSS_POINTS = 0
     TOURNAMENT_SIZE = 5
     INITIAL_ERROR_PROBABILITY = 1
+    MAX_TIME_IN_SECONDS = 300
 
     def __init__(self):
         self.__distracted_player = DistractedPlayer('Distracted', PlayOption.O, self.INITIAL_ERROR_PROBABILITY)
@@ -47,6 +49,8 @@ class GeneticAlgorithm(Algorithm):
     def run_first_block(self, population: np.ndarray) -> np.ndarray:
         error_probability = self.INITIAL_ERROR_PROBABILITY
 
+        time_start = time.time()
+
         while True:
             fitness_scores = self.evaluate_population_fitness(population)
             elite_scores = self.get_elite_fitness_scores(fitness_scores)
@@ -54,7 +58,7 @@ class GeneticAlgorithm(Algorithm):
             if np.mean(elite_scores) >= self.CHANGE_STEP_RATE:
                 error_probability -= 0.1
 
-                if error_probability < 0.1:
+                if error_probability < 0.1 or (time.time() - time_start) > self.MAX_TIME_IN_SECONDS:
                     break
 
                 self.__distracted_player.set_error_probability(error_probability)
@@ -74,8 +78,6 @@ class GeneticAlgorithm(Algorithm):
             elite_population = self.get_elite_population(population, fitness_scores)
 
             population = np.concatenate([elite_population, next_population])
-
-        print(elite_scores)
 
         return population
 
