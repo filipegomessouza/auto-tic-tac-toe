@@ -27,3 +27,6 @@ class DistractedPlayer(Player):
         if self.__error_probability < 0 or self.__error_probability > 1:
             raise ValueError('Error probability must be between 0 and 1.')
 
+    @property
+    def error_probability(self) -> float:
+        return self.__error_probability

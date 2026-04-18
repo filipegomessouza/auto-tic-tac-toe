@@ -59,3 +59,5 @@ class NeuralNetworkPlayer(Player):
     def set_time_to_wait_after_playing_move_in_seconds(self, time_to_wait: float):
         self.__time_to_wait_after_playing_move_in_seconds = time_to_wait
 
+    def get_weights(self) -> np.ndarray:
+        return self.__neural_network.get_weights()

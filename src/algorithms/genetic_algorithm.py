@@ -13,29 +13,29 @@ import random
 
 class GeneticAlgorithm(Algorithm):
     POPULATION_SIZE = 100
-    MUTATION_RATE = 0.3
+    MUTATION_RATE = 0.5
     MUTATION_MEAN = 0
     MUTATION_SIGMA = 1
-    CHANGE_STEP_RATE = 0.99
+    CHANGE_STEP_RATE = 0.8
     ELITE_SIZE = 20
     GAMES_TO_EVAL_INDIVIDUAL = 30
     WIN_POINTS = 3
     DRAW_POINTS = 1
     LOSS_POINTS = 0
     TOURNAMENT_SIZE = 5
+    INITIAL_ERROR_PROBABILITY = 1
 
     def __init__(self):
-        self.__random_player = RandomPlayer('Random', PlayOption.O)
-        self.__distracted_player = DistractedPlayer('Distracted', PlayOption.O, 0.9)
+        self.__distracted_player = DistractedPlayer('Distracted', PlayOption.O, self.INITIAL_ERROR_PROBABILITY)
 
         self.__neural_network = OneHiddenLayerNeuralNetwork(Board.BOARD_SIZE ** 2, 2 * Board.BOARD_SIZE ** 2, Board.BOARD_SIZE ** 2)
 
         self.__neural_network_player = NeuralNetworkPlayer('AI', PlayOption.X, self.__neural_network)
 
-        self.__tic_tac_toe_game = TicTacToeGame(self.__neural_network_player, self.__random_player, False)
+        self.__tic_tac_toe_game = TicTacToeGame(False)
 
 
-    def run(self) -> Player:
+    def run(self) -> NeuralNetworkPlayer:
         population = self.initialize_population()
 
         population = self.run_first_block(population)
@@ -48,17 +48,22 @@ class GeneticAlgorithm(Algorithm):
 
 
     def run_first_block(self, population: np.ndarray) -> np.ndarray:
+        error_probability = self.INITIAL_ERROR_PROBABILITY
+
         while True:
             fitness_scores = self.evaluate_population_fitness(population)
-
             elite_scores = self.get_elite_fitness_scores(fitness_scores)
 
             if np.mean(elite_scores) >= self.CHANGE_STEP_RATE:
-                break
+                error_probability -= 0.1
+
+                if error_probability == 0.1:
+                    break
+
+                self.__distracted_player.set_error_probability(error_probability)
 
             next_population = []
-
-            for i in range(self.ELITE_SIZE, self.POPULATION_SIZE):
+            for _ in range(self.ELITE_SIZE, self.POPULATION_SIZE):
                 parent1 = self.select_parent(population, fitness_scores)
                 parent2 = self.select_parent(population, fitness_scores)
 
@@ -110,8 +115,11 @@ class GeneticAlgorithm(Algorithm):
 
         fitness = 0
 
+        player_one = self.__neural_network_player
+        player_two = self.__distracted_player
+
         for _ in range(self.GAMES_TO_EVAL_INDIVIDUAL):
-            winner_player = self.__tic_tac_toe_game.run()
+            winner_player = self.__tic_tac_toe_game.run(player_one, player_two)
 
             if winner_player is None:
                 fitness += self.DRAW_POINTS
@@ -120,7 +128,7 @@ class GeneticAlgorithm(Algorithm):
             else:
                 fitness += self.LOSS_POINTS
 
-            self.__tic_tac_toe_game.swap_players()
+            player_one, player_two = player_two, player_one
 
         return fitness / (self.GAMES_TO_EVAL_INDIVIDUAL * self.WIN_POINTS)
 
