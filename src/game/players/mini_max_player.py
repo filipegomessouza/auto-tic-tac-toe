@@ -6,7 +6,7 @@ from src.enums.result import Result
 import time
 import random
 
-class OptimalPlayer(Player):
+class MiniMaxPlayer(Player):
     def __init__(self, name: str, play_option: PlayOption, time_to_wait_after_playing_move_in_seconds: Optional[float] = None) -> None:
         super().__init__(name, play_option)
         self.__time_to_wait_after_playing_move_in_seconds = time_to_wait_after_playing_move_in_seconds

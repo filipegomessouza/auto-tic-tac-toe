@@ -1,7 +1,8 @@
-from src.game.players.optimal_player import OptimalPlayer
+from src.game.players.mini_max_player import MiniMaxPlayer
 from src.game.players.random_player import RandomPlayer
 from src.game.players.human_player import HumanPlayer
 from src.game.players.distracted_player import DistractedPlayer
+from src.game.players.table_player import TablePlayer
 from src.enums.play_option import PlayOption
 from src.game.players.neural_network_player import NeuralNetworkPlayer
 from src.neural_networks.one_hidden_layer_neural_network import OneHiddenLayerNeuralNetwork
@@ -9,13 +10,16 @@ from src.neural_networks.one_hidden_layer_neural_network import OneHiddenLayerNe
 SHOULD_RENDER = True
 
 TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS = 2
-ERROR_PROBABILITY_FOR_DISTRACTED_PLAYER = 0.7
+ERROR_PROBABILITY_FOR_DISTRACTED_PLAYER = 0.0
 
 RANDOM_PLAYER_X = RandomPlayer('Random Player X', PlayOption.X, TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
 RANDOM_PLAYER_O = RandomPlayer('Random Player O', PlayOption.O, TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
 
-OPTIMAL_PLAYER_X = OptimalPlayer('Optimal Player X', PlayOption.X, TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
-OPTIMAL_PLAYER_O = OptimalPlayer('Optimal Player O', PlayOption.O, TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
+MINI_MAX_PLAYER_X = MiniMaxPlayer('MiniMax Player X', PlayOption.X, TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
+MINI_MAX_PLAYER_O = MiniMaxPlayer('MiniMax Player O', PlayOption.O, TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
+
+TABLE_PLAYER_X = TablePlayer('Table Player X', PlayOption.X, TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
+TABLE_PLAYER_O = TablePlayer('Table Player O', PlayOption.O, TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
 
 HUMAN_PLAYER_X = HumanPlayer('Human Player X', PlayOption.X)
 HUMAN_PLAYER_O = HumanPlayer('Human Player O', PlayOption.O)
