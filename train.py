@@ -10,7 +10,7 @@ best_player = g.run()
 
 weights = best_player.get_weights()
 
-with open('weights2.txt', 'w') as file:
+with open('weights.txt', 'w') as file:
     list_weights: List[float] = weights.tolist()
 
     file.write('\n'.join(map(str, list_weights)))
