@@ -18,3 +18,6 @@ class Player(ABC):
     @property
     def play_option(self) -> PlayOption:
         return self.__play_option
+
+    def set_play_option(self, play_option: PlayOption):
+        self.__play_option = play_option

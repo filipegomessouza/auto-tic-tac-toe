@@ -18,7 +18,8 @@ class TicTacToeGame:
         self.__current_player = player_one
         self.__result: Optional[Result] = None
 
-    def run(self) -> None:
+    def run(self) -> Optional[Player]:
+        self.__board.reset_board()
         self.__render()
 
         while True:
@@ -36,6 +37,14 @@ class TicTacToeGame:
             self.__render()
 
         self.__render()
+
+        if self.__result == Result.DRAW:
+            return None
+
+        if self.__player_one.play_option.result() == self.__result:
+            return self.__player_one
+
+        return self.__player_two
 
     def __play(self) -> bool:
         is_valid_play = True

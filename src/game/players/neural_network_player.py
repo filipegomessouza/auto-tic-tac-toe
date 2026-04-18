@@ -56,3 +56,6 @@ class NeuralNetworkPlayer(Player):
 
         return -1
 
+    def set_neural_network(self, neural_network: NeuralNetwork):
+        self.__neural_network = neural_network
+

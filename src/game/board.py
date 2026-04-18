@@ -9,10 +9,7 @@ class Board():
     BOARD_SIZE = 3
 
     def __init__(self):
-        self.__board: List[List[Optional[PlayOption]]] = [
-            [None] * self.BOARD_SIZE for _ in range(self.BOARD_SIZE)
-        ]
-        self.__filled_positions: int = 0
+        self.reset_board()
 
     def set(self, play_option: PlayOption, i: int, j: int) -> 'Board':
         if not self.__is_valid_position(i, j):
@@ -98,3 +95,7 @@ class Board():
 
     def get_arr_board(self) -> List[List[Optional[PlayOption]]]:
         return copy.deepcopy(self.__board)
+
+    def reset_board(self) -> None:
+        self.__board = [[None] * self.BOARD_SIZE for _ in range(self.BOARD_SIZE)]
+        self.__filled_positions = 0
