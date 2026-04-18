@@ -2,7 +2,7 @@ from typing import Optional
 from src.game.players.player import Player
 from src.game.board import Board
 from src.enums.play_option import PlayOption
-from src.game.players.optimal_player import OptimalPlayer
+from src.game.players.table_player import TablePlayer
 from src.game.players.random_player import RandomPlayer
 import random
 
@@ -12,7 +12,7 @@ class DistractedPlayer(Player):
         self.__error_probability = error_probability
         self.__validate_error_probability()
 
-        self.__optimal_player = OptimalPlayer(name, play_option, time_to_wait_after_playing_move_in_seconds)
+        self.__optimal_player = TablePlayer(name, play_option, time_to_wait_after_playing_move_in_seconds)
         self.__random_player = RandomPlayer(name, play_option, time_to_wait_after_playing_move_in_seconds)
 
     def play(self, board: Board) -> None:
