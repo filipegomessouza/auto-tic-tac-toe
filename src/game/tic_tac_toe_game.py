@@ -20,6 +20,8 @@ class TicTacToeGame:
 
     def run(self) -> Optional[Player]:
         self.__board.reset_board()
+        self.__current_player = self.__player_one
+        self.__result = None
         self.__render()
 
         while True:
@@ -72,9 +74,16 @@ class TicTacToeGame:
         else:
             print('Game over! Result:', self.__result.value)
 
+            if self.__result != Result.DRAW:
+                winner = self.__player_one if self.__player_one.play_option.result() == self.__result else self.__player_two
+                print('Winner:', winner.name)
+
     def __clear_console(self) -> None:
         os.system('clear' if os.name == 'posix' else 'cls')
 
     def __validate_players(self) -> None:
         if self.__player_one.play_option == self.__player_two.play_option:
             raise PlayersWithEqualPlayOptionException('Players cannot have the same play option.')
+
+    def swap_players(self) -> None:
+        self.__player_one, self.__player_two = self.__player_two, self.__player_one

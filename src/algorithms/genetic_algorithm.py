@@ -7,27 +7,30 @@ from src.game.players.distracted_player import DistractedPlayer
 from src.enums.play_option import PlayOption
 from src.game.tic_tac_toe_game import TicTacToeGame
 from src.game.players.player import Player
+from src.utils.debug import dd
 import numpy as np
+import random
 
 class GeneticAlgorithm(Algorithm):
     POPULATION_SIZE = 100
-    MUTATION_RATE = 0.8
-    CHANGE_STEP_RATE = 0.9
+    MUTATION_RATE = 0.3
+    MUTATION_MEAN = 0
+    MUTATION_SIGMA = 1
+    CHANGE_STEP_RATE = 0.99
     ELITE_SIZE = 20
     GAMES_TO_EVAL_INDIVIDUAL = 30
     WIN_POINTS = 3
     DRAW_POINTS = 1
     LOSS_POINTS = 0
+    TOURNAMENT_SIZE = 5
 
     def __init__(self):
         self.__random_player = RandomPlayer('Random', PlayOption.O)
         self.__distracted_player = DistractedPlayer('Distracted', PlayOption.O, 0.9)
 
-        self.__neural_network_player = NeuralNetworkPlayer(
-            'AI',
-            PlayOption.X,
-            OneHiddenLayerNeuralNetwork(Board.BOARD_SIZE, 2 * Board.BOARD_SIZE, Board.BOARD_SIZE)
-        )
+        self.__neural_network = OneHiddenLayerNeuralNetwork(Board.BOARD_SIZE ** 2, 2 * Board.BOARD_SIZE ** 2, Board.BOARD_SIZE ** 2)
+
+        self.__neural_network_player = NeuralNetworkPlayer('AI', PlayOption.X, self.__neural_network)
 
         self.__tic_tac_toe_game = TicTacToeGame(self.__neural_network_player, self.__random_player, False)
 
@@ -39,7 +42,7 @@ class GeneticAlgorithm(Algorithm):
 
         best_individual_index = np.argmax(self.evaluate_population_fitness(population))
         best_individual = population[best_individual_index]
-        self.__neural_network_player.set_neural_network(best_individual)
+        self.__neural_network.set_weights(best_individual)
 
         return self.__neural_network_player
 
@@ -53,7 +56,24 @@ class GeneticAlgorithm(Algorithm):
             if np.mean(elite_scores) >= self.CHANGE_STEP_RATE:
                 break
 
-            # seleção, crossover e mutação
+            next_population = []
+
+            for i in range(self.ELITE_SIZE, self.POPULATION_SIZE):
+                parent1 = self.select_parent(population, fitness_scores)
+                parent2 = self.select_parent(population, fitness_scores)
+
+                child = self.crossover(parent1, parent2)
+                mutated_child = self.mutate(child)
+
+                next_population.append(mutated_child)
+
+
+            next_population = np.array(next_population)
+            elite_population = self.get_elite_population(population, fitness_scores)
+
+            population = np.concatenate([elite_population, next_population])
+
+        print(elite_scores)
 
         return population
 
@@ -68,13 +88,25 @@ class GeneticAlgorithm(Algorithm):
         return fitness_scores[elite_indices]
 
     def initialize_population(self) -> np.ndarray:
-        return np.array([OneHiddenLayerNeuralNetwork(Board.BOARD_SIZE ** 2, 2 * Board.BOARD_SIZE ** 2, Board.BOARD_SIZE ** 2) for _ in range(self.POPULATION_SIZE)])
+        return np.array([self.initialize_individual() for _ in range(self.POPULATION_SIZE)])
+
+    def initialize_individual(self) -> np.ndarray:
+        input_size = Board.BOARD_SIZE ** 2
+        hidden_size = 2 * input_size
+        output_size = input_size
+
+        return np.concatenate([
+            np.random.randn(input_size * hidden_size) * 0.5,
+            np.zeros(hidden_size),
+            np.random.randn(hidden_size * output_size) * 0.5,
+            np.zeros(output_size),
+        ])
 
     def evaluate_population_fitness(self, population: np.ndarray) -> np.ndarray:
         return np.array([self.evaluate_fitness(individual) for individual in population])
 
-    def evaluate_fitness(self, individual: OneHiddenLayerNeuralNetwork) -> float:
-        self.__neural_network_player.set_neural_network(individual)
+    def evaluate_fitness(self, individual: np.ndarray) -> float:
+        self.__neural_network.set_weights(individual)
 
         fitness = 0
 
@@ -88,22 +120,23 @@ class GeneticAlgorithm(Algorithm):
             else:
                 fitness += self.LOSS_POINTS
 
+            self.__tic_tac_toe_game.swap_players()
+
         return fitness / (self.GAMES_TO_EVAL_INDIVIDUAL * self.WIN_POINTS)
 
-    def select_parents(self, population: np.ndarray, fitness_scores: np.ndarray) -> np.ndarray:
-        
+    def select_parent(self, population: np.ndarray, fitness_scores: np.ndarray) -> np.ndarray:
+        candidate_indices = np.random.choice(len(population), size=self.TOURNAMENT_SIZE, replace = True)
+        best_idx = candidate_indices[np.argmax(fitness_scores[candidate_indices])]
 
-        # Code to select parents based on fitness scores
-        pass
+        return population[best_idx]
 
-    def crossover(self, parents: np.ndarray) -> np.ndarray:
-        # Code to perform crossover between parents to create offspring
-        pass
+    def crossover(self, parent1: np.ndarray, parent2: np.ndarray) -> np.ndarray:
+        mask = np.random.rand(len(parent1)) < 0.5
 
-    def mutate(self, offspring: np.ndarray) -> np.ndarray:
-        # Code to apply mutation to the offspring
-        pass
+        return np.where(mask, parent1, parent2)
 
-    def create_new_population(self, mutated_offspring: np.ndarray) -> np.ndarray:
-        # Code to create a new population for the next generation
-        pass
+    def mutate(self, individual: np.ndarray) -> np.ndarray:
+        mask = np.random.rand(len(individual)) < self.MUTATION_RATE
+        individual[mask] += np.random.normal(self.MUTATION_MEAN, self.MUTATION_SIGMA, mask.sum())
+
+        return individual

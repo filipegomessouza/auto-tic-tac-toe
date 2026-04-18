@@ -56,6 +56,6 @@ class NeuralNetworkPlayer(Player):
 
         return -1
 
-    def set_neural_network(self, neural_network: NeuralNetwork):
-        self.__neural_network = neural_network
+    def set_time_to_wait_after_playing_move_in_seconds(self, time_to_wait: float):
+        self.__time_to_wait_after_playing_move_in_seconds = time_to_wait
 

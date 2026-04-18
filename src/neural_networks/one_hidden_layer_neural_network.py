@@ -1,6 +1,8 @@
 from src.neural_networks.neural_network import NeuralNetwork
 import numpy as np
 
+from src.utils.debug import dd
+
 class OneHiddenLayerNeuralNetwork(NeuralNetwork):
     def __init__(self, input_size: int, hidden_size: int, output_size: int):
         self.__input_size  = input_size
