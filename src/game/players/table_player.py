@@ -21,7 +21,7 @@ _LINES = [
 
 BoardKey = Tuple[Optional[PlayOption], ...]
 StateKey = Tuple[BoardKey, PlayOption]
-PolicyEntry = Tuple[Tuple[int, int], int]
+PolicyEntry = Tuple[List[Tuple[int, int]], int]
 
 
 class TablePlayer(Player):
@@ -38,7 +38,8 @@ class TablePlayer(Player):
             i, j = random.choice(positions)
         else:
             board_key: BoardKey = tuple(cell for row in board.get_arr_board() for cell in row)
-            (i, j), _ = self.__table[(board_key, self.play_option)]
+            moves, _ = self.__table[(board_key, self.play_option)]
+            i, j = random.choice(moves)
 
         board.set(self.play_option, i, j)
 
@@ -62,11 +63,11 @@ class TablePlayer(Player):
 
         if result is not None:
             score = self.__score_result(result, play_option)
-            self.__table[key] = ((-1, -1), score)
+            self.__table[key] = ([], score)
             return score
 
         best_score = float('-inf')
-        best_move: Tuple[int, int] = (-1, -1)
+        best_moves: List[Tuple[int, int]] = []
         opponent = play_option.opposite()
 
         for idx in range(_NUM_CELLS):
@@ -80,10 +81,12 @@ class TablePlayer(Player):
 
             if score > best_score:
                 best_score = score
-                best_move = (idx // _BOARD_SIZE, idx % _BOARD_SIZE)
+                best_moves = [(idx // _BOARD_SIZE, idx % _BOARD_SIZE)]
+            elif score == best_score:
+                best_moves.append((idx // _BOARD_SIZE, idx % _BOARD_SIZE))
 
         final_score = int(best_score)
-        self.__table[key] = (best_move, final_score)
+        self.__table[key] = (best_moves, final_score)
 
         return final_score
 
