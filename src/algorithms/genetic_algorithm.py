@@ -14,7 +14,7 @@ import time
 
 class GeneticAlgorithm(Algorithm):
     POPULATION_SIZE = 100
-    MUTATION_RATE = 0.5
+    MUTATION_RATE = 0.05
     MUTATION_MEAN = 0
     MUTATION_SIGMA = 1
     CHANGE_STEP_RATE = 0.8
@@ -24,7 +24,7 @@ class GeneticAlgorithm(Algorithm):
     DRAW_POINTS = 1
     TOURNAMENT_SIZE = 3
     INITIAL_ERROR_PROBABILITY = 1
-    MAX_TIME_IN_SECONDS = 60
+    MAX_TIME_IN_SECONDS = 300
 
     def __init__(self):
         self.__distracted_player = DistractedPlayer('Distracted', PlayOption.O, self.INITIAL_ERROR_PROBABILITY)
