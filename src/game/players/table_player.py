@@ -31,7 +31,7 @@ class TablePlayer(Player):
         self.__table: Dict[StateKey, PolicyEntry] = {}
         self.__build_table()
 
-    def play(self, board: Board) -> None:
+    def play(self, board: Board) -> Tuple[int, int]:
         positions = board.available_positions()
 
         if len(positions) == board.BOARD_SIZE ** 2:
@@ -45,6 +45,8 @@ class TablePlayer(Player):
 
         if self.__time_to_wait_after_playing_move_in_seconds is not None:
             time.sleep(self.__time_to_wait_after_playing_move_in_seconds)
+
+        return i, j
 
     def __build_table(self) -> None:
         board: List[Optional[PlayOption]] = [None] * _NUM_CELLS

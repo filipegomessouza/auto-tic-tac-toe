@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 from src.game.players.player import Player
 from src.game.board import Board
 from src.enums.play_option import PlayOption
@@ -15,9 +15,10 @@ class DistractedPlayer(Player):
         self.__optimal_player = TablePlayer(name, play_option, time_to_wait_after_playing_move_in_seconds)
         self.__random_player = RandomPlayer(name, play_option, time_to_wait_after_playing_move_in_seconds)
 
-    def play(self, board: Board) -> None:
+    def play(self, board: Board) -> Tuple[int, int]:
         player = self.__random_player if random.random() <= self.__error_probability else self.__optimal_player
-        player.play(board)
+
+        return player.play(board)
 
     def set_error_probability(self, error_probability: float) -> None:
         self.__error_probability = error_probability

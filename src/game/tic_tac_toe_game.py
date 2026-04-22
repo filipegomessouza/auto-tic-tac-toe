@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, List
 from src.game.board import Board
 from src.game.players.player import Player
 from src.exceptions.board_exception import BoardException
@@ -7,8 +7,9 @@ from src.exceptions.players_with_equal_play_option_exception import PlayersWithE
 from src.enums.result import Result
 
 class TicTacToeGame:
-    def __init__(self, should_render: bool = True) -> None:
+    def __init__(self, should_render: bool = True, history_filename: Optional[str] = None) -> None:
         self.__should_render = should_render
+        self.__history_filename = history_filename
         self.__board = Board()
 
     def run(self, player_one: Player, player_two: Player) -> Optional[Player]:
@@ -18,6 +19,7 @@ class TicTacToeGame:
         self.__validate_players()
         self.__current_player = self.__player_one
         self.__result = None
+        self.__history: List[str] = []
         self.__render()
 
         while True:
@@ -35,9 +37,11 @@ class TicTacToeGame:
             self.__render()
 
         self.__render()
+        self.__save_history()
 
         if self.__result == Result.DRAW:
             return None
+
 
         if self.__player_one.play_option.result() == self.__result:
             return self.__player_one
@@ -48,7 +52,9 @@ class TicTacToeGame:
         is_valid_play = True
 
         try:
-            self.__current_player.play(self.__board)
+            i, j = self.__current_player.play(self.__board)
+            self.__append_history(i, j)
+
         except BoardException as e:
             is_valid_play = False
             print(e)
@@ -83,3 +89,16 @@ class TicTacToeGame:
 
     def swap_players(self) -> None:
         self.__player_one, self.__player_two = self.__player_two, self.__player_one
+
+    def __append_history(self, i: int, j: int) -> None:
+        if self.__history_filename is None:
+            return
+
+        self.__history.append(f"{self.__current_player.name} played {self.__current_player.play_option.value} at position ({i}, {j})")
+
+    def __save_history(self) -> None:
+        if self.__history_filename is None:
+            return
+
+        with open(self.__history_filename, 'w') as file:
+            file.write('\n'.join(self.__history))

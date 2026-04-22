@@ -13,7 +13,7 @@ class NeuralNetworkPlayer(Player):
         self.__neural_network = neural_network
         self.__time_to_wait_after_playing_move_in_seconds = time_to_wait_after_playing_move_in_seconds
 
-    def play(self, board: Board) -> None:
+    def play(self, board: Board) -> Tuple[int, int]:
         input_layer = self.__get_input_layer(board)
         output_layer = self.__neural_network.forward(input_layer)
 
@@ -22,6 +22,8 @@ class NeuralNetworkPlayer(Player):
 
         if self.__time_to_wait_after_playing_move_in_seconds is not None:
             time.sleep(self.__time_to_wait_after_playing_move_in_seconds)
+
+        return i, j
 
     def __get_input_layer(self, board: Board) -> np.ndarray:
         arr_board = board.get_arr_board()

@@ -7,9 +7,11 @@ class HumanPlayer(Player):
     def __init__(self, name: str, play_option: PlayOption):
         super().__init__(name, play_option)
 
-    def play(self, board: Board) -> None:
+    def play(self, board: Board) -> Tuple[int, int]:
         i, j = self.__get_cli_input()
         board.set(self.play_option, i, j)
+
+        return i, j
 
     def __get_cli_input(self) -> Tuple[int, int]:
         while True:

@@ -1,3 +1,4 @@
+from typing import Tuple
 from abc import ABC, abstractmethod
 from src.enums.play_option import PlayOption
 from src.game.board import Board
@@ -8,7 +9,7 @@ class Player(ABC):
         self.__play_option = play_option
 
     @abstractmethod
-    def play(self, board: Board) -> None:
+    def play(self, board: Board) -> Tuple[int, int]:
         pass
 
     @property
