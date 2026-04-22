@@ -16,12 +16,12 @@ neural_network.set_weights(weights)
 best_player = NeuralNetworkPlayer('AI', PlayOption.X, neural_network, config.TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
 
 try:
-    game = TicTacToeGame(config.SHOULD_RENDER)
+    game = TicTacToeGame(config.SHOULD_RENDER, 'history.txt')
 except PlayersWithEqualPlayOptionException as e:
     print(e)
     exit(1)
 
 game.run(
+    config.HUMAN_PLAYER_O,
     best_player,
-    config.TABLE_PLAYER_O,
 )

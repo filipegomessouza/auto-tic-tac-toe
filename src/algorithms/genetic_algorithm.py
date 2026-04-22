@@ -14,15 +14,16 @@ import time
 
 class GeneticAlgorithm(Algorithm):
     POPULATION_SIZE = 100
-    MUTATION_RATE = 0.05
+    MUTATION_RATE = 0.1
     MUTATION_MEAN = 0
     MUTATION_SIGMA = 1
-    CHANGE_STEP_RATE = 0.8
+    CHANGE_STEP_RATE = 0.9
     ELITE_SIZE = 5
     GAMES_TO_EVAL_INDIVIDUAL = 30
     WIN_POINTS = 3
     DRAW_POINTS = 1
-    TOURNAMENT_SIZE = 3
+    LOSS_POINTS = 0
+    TOURNAMENT_SIZE = 5
     INITIAL_ERROR_PROBABILITY = 1
     MAX_TIME_IN_SECONDS = 300
 
@@ -34,6 +35,7 @@ class GeneticAlgorithm(Algorithm):
 
         self.__win_points = self.WIN_POINTS
         self.__draw_points = self.DRAW_POINTS
+        self.__loss_points = self.LOSS_POINTS
 
 
     def run(self) -> NeuralNetworkPlayer:
@@ -61,8 +63,15 @@ class GeneticAlgorithm(Algorithm):
                 error_probability -= 0.1
                 print('Decreasing error probability to', error_probability)
 
+                if error_probability <= 0:
+                    break
+
                 if error_probability <= 0.4:
                     self.__draw_points = 2
+
+                if error_probability <= 0.2:
+                    self.__draw_points = 3
+                    self.__loss_points = -10
 
                 self.__distracted_player.set_error_probability(error_probability)
 
@@ -131,6 +140,8 @@ class GeneticAlgorithm(Algorithm):
                 fitness += self.__draw_points
             elif winner_player is self.__neural_network_player:
                 fitness += self.__win_points
+            else:
+                fitness += self.__loss_points
 
             player_one, player_two = player_two, player_one
 

@@ -9,7 +9,7 @@ from src.neural_networks.one_hidden_layer_neural_network import OneHiddenLayerNe
 
 SHOULD_RENDER = True
 
-TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS = 2
+TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS = None
 ERROR_PROBABILITY_FOR_DISTRACTED_PLAYER = 0.0
 
 RANDOM_PLAYER_X = RandomPlayer('Random Player X', PlayOption.X, TIME_TO_WAIT_AFTER_PLAYING_MOVE_IN_SECONDS)
