@@ -17,7 +17,7 @@ class GeneticAlgorithm(Algorithm):
     MUTATION_RATE = 0.1
     MUTATION_MEAN = 0
     MUTATION_SIGMA = 1
-    CHANGE_STEP_RATE = 0.9
+    CHANGE_STEP_RATE = 0.8
     ELITE_SIZE = 5
     GAMES_TO_EVAL_INDIVIDUAL = 30
     WIN_POINTS = 3
@@ -25,7 +25,7 @@ class GeneticAlgorithm(Algorithm):
     LOSS_POINTS = 0
     TOURNAMENT_SIZE = 5
     INITIAL_ERROR_PROBABILITY = 1
-    MAX_TIME_IN_SECONDS = 300
+    MAX_TIME_IN_SECONDS = 600
 
     def __init__(self):
         self.__distracted_player = DistractedPlayer('Distracted', PlayOption.O, self.INITIAL_ERROR_PROBABILITY)
@@ -51,37 +51,45 @@ class GeneticAlgorithm(Algorithm):
 
 
     def run_first_block(self, population: np.ndarray) -> np.ndarray:
-        error_probability = self.INITIAL_ERROR_PROBABILITY
+        error_probability = self.INITIAL_ERROR_PROBABILITY * 10
 
         time_start = time.time()
 
+        i = -1
+
         while True:
+            i += 1
             fitness_scores = self.evaluate_population_fitness(population)
             elite_scores = self.get_elite_fitness_scores(fitness_scores)
 
+            if i % 100 == 0:
+                print(f'Generation {i}, best fitness: {elite_scores[-1]}, average fitness: {np.mean(elite_scores)}, error probability: {error_probability / 10}')
+
             if np.mean(elite_scores) >= self.CHANGE_STEP_RATE:
-                error_probability -= 0.1
+                error_probability -= 1
                 print('Decreasing error probability to', error_probability)
 
                 if error_probability <= 0:
                     break
 
-                if error_probability <= 0.4:
+                if error_probability <= 4:
                     self.__draw_points = 2
 
-                if error_probability <= 0.2:
+                if error_probability <= 2:
                     self.__draw_points = 3
                     self.__loss_points = -10
 
-                self.__distracted_player.set_error_probability(error_probability)
+                self.__distracted_player.set_error_probability(error_probability / 10)
 
             if time.time() - time_start > self.MAX_TIME_IN_SECONDS:
                 print('Max time reached, stopping algorithm')
                 break
 
+            elite_population = self.get_elite_population(population, fitness_scores)
+
             next_population = []
             for _ in range(self.ELITE_SIZE, self.POPULATION_SIZE):
-                parent1 = self.select_parent(population, fitness_scores)
+                parent1 = self.select_parent(elite_population, elite_scores)
                 parent2 = self.select_parent(population, fitness_scores)
 
                 child = self.crossover(parent1, parent2)
@@ -89,9 +97,7 @@ class GeneticAlgorithm(Algorithm):
 
                 next_population.append(mutated_child)
 
-
             next_population = np.array(next_population)
-            elite_population = self.get_elite_population(population, fitness_scores)
 
             population = np.concatenate([elite_population, next_population])
 
@@ -154,7 +160,7 @@ class GeneticAlgorithm(Algorithm):
         return population[best_idx]
 
     def crossover(self, parent1: np.ndarray, parent2: np.ndarray) -> np.ndarray:
-        mask = np.random.rand(len(parent1)) < 0.5
+        mask = np.random.rand(len(parent1)) < 0.7
 
         return np.where(mask, parent1, parent2)
 
