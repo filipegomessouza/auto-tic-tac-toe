@@ -4,8 +4,6 @@ from typing import List
 
 g = GeneticAlgorithm()
 
-# f = g.evaluate_fitness(OneHiddenLayerNeuralNetwork(9, 18, 9))
-
 best_player = g.run()
 
 weights = best_player.get_weights()
